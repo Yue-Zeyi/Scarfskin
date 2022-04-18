@@ -29,5 +29,5 @@
 </div>
 </div>
 <div class="container commentsdd">
-<?php $this->need('comments.php'); ?></div> 
+<?php $this->need('comment.php'); ?></div> 
 <?php $this->need('footer.php'); ?>

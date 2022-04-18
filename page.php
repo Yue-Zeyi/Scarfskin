@@ -17,6 +17,6 @@
 </div>
 </article>
 <div class="container commentsdd">
-<?php $this->need('comments.php'); ?>
+<?php $this->need('comment.php'); ?>
 </div>
 <?php $this->need('footer.php'); ?>

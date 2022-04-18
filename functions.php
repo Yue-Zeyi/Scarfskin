@@ -8,11 +8,11 @@ function themeConfig($form) {
 	$logoUrl = new Typecho_Widget_Helper_Form_Element_Text('logoUrl', NULL, NULL, _t('站点标题 LOGO 地址'), _t('在这里填入一个图片 URL 地址, 以显示网站标题 LOGO'));
 	$form->addInput($logoUrl);
 	
-	$customTitle = new Typecho_Widget_Helper_Form_Element_Text('customTitle', NULL, NULL, _t('自定义站点标题'), _t('仅用于替换页面头部位置的“标题”显示，和Typecho后台设置的站点名称不冲突，留空则显示默认站点名称'));
+	$customTitle = new Typecho_Widget_Helper_Form_Element_Text('customTitle', NULL, NULL, _t('自定义文字LOGO'), _t('仅用于替换页面头部位置的“标题”显示，和Typecho后台设置的站点名称不冲突，留空则显示默认站点名称'));
 	$form->addInput($customTitle);
 	
 	$titleForm = new Typecho_Widget_Helper_Form_Element_Radio('titleForm', 
-	array('title' => _t('显示文字标题'),
+	array('title' => _t('显示文字LOGO'),
 	'logo' => _t('显示图片LOGO')),
 	'title', _t('站点标题显示形式'), _t('默认显示文字标题，若要显示LOGO，请在上方添加 LOGO 地址并开启'));
 	$form->addInput($titleForm);
@@ -62,10 +62,16 @@ function themeConfig($form) {
 	0, _t('返回顶部'), _t('默认关闭，启用则会显示返回顶部按钮'));
 	$form->addInput($Totop);
 	
+	$loading = new Typecho_Widget_Helper_Form_Element_Radio('loading', 
+	array(1 => _t('启用'),
+	0 => _t('关闭')),
+	0, _t('延时加载功能'), _t('默认关闭，启用则会禁用F12和右键'));
+	$form->addInput($loading);
+	
 	$node = new Typecho_Widget_Helper_Form_Element_Radio('node', 
 	array(1 => _t('启用'),
 	0 => _t('关闭')),
-	0, _t('防扒站功能'), _t('默认关闭，启用则会禁用F12和右键'));
+	0, _t('防扒站功能'), _t('默认关闭，启用则会延时加载loading...'));
 	$form->addInput($node);
 
 	$InsideLinksIcon = new Typecho_Widget_Helper_Form_Element_Radio('InsideLinksIcon', 
@@ -73,6 +79,13 @@ function themeConfig($form) {
 	0 => _t('关闭')),
 	0, _t('显示友链图标（内页）'), _t('默认关闭，启用后友链页面链接将显示链接图标'));
 	$form->addInput($InsideLinksIcon);
+	
+	$Emoji = new Typecho_Widget_Helper_Form_Element_Radio('Emoji',
+        array('able' => _t('启用'),
+            'disable' => _t('禁止'),
+        ),
+        'disable', _t('Emoji表情设置'), _t('默认显示Emoji表情，如果你的数据库charset配置不是utf8mb4请禁用'));
+    $form->addInput($Emoji);	
 
 	$ICPbeian = new Typecho_Widget_Helper_Form_Element_Text('ICPbeian', NULL, NULL, _t('ICP备案号'), _t('在这里输入ICP备案号,留空则不显示'));
 	$form->addInput($ICPbeian);
@@ -333,15 +346,6 @@ function Links($sorts = NULL, $icon = 0) {
 	echo $link ? $link : '<li>暂无链接</li>'.PHP_EOL;
 }
 
-function Playlist() {
-	$options = Helper::options();
-	$arr = explode(PHP_EOL, $options->MusicUrl);
-	if ($options->MusicSet == 'shuffle') {
-		shuffle($arr);
-	}
-	echo implode(',', $arr);
-}
-
 function compressHtml($html_source) {
 	$chunks = preg_split('/(<!--<nocompress>-->.*?<!--<\/nocompress>-->|<nocompress>.*?<\/nocompress>|<pre.*?\/pre>|<textarea.*?\/textarea>|<script.*?\/script>)/msi', $html_source, -1, PREG_SPLIT_DELIM_CAPTURE);
 	$compress = '';
@@ -395,12 +399,6 @@ function themeFields($layout) {
     $thumb = new Typecho_Widget_Helper_Form_Element_Text('thumb', NULL, NULL, _t('自定义缩略图'), _t('在这里填入一个图片 URL 地址, 设置为本文的缩略图，不设置则调用文章内第一张图片，若文章内无任何图片将调用后台自定义缩略图。'));
     $thumb->input->setAttribute('class', 'w-100');
 	$layout->addItem($thumb);
-
-// 	$catalog = new Typecho_Widget_Helper_Form_Element_Radio('catalog', 
-// 	array(1 => _t('启用'),
-// 	0 => _t('关闭')),
-// 	0, _t('文章目录'), _t('默认关闭，启用则会在文章内显示“文章目录”（若文章内无任何标题，则不显示目录），需要在“控制台-设置外观-文章目录”启用“使用文章内设定”后，方可生效'));
-// 	$layout->addItem($catalog);
 }
 
 

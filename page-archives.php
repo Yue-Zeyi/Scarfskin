@@ -49,7 +49,6 @@ echo $output;
 ?>
 </div>
 
-
 </article>
 </div>
 <?php $this->need('footer.php'); ?>

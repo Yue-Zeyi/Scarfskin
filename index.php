@@ -1,7 +1,7 @@
 <?php
 /**
 * 一款基于Typecho拥有漂亮外表的自适应简洁主题。
-* <ul><li>自适应三端，完美适配Typecho1.2.0版本</li><li>极致化图片装饰，使用文档：<a href="https://www.yuezeyi.com/scarfskin.html" target="_blank">Scarfskin详细介绍</a></li></ul>
+* <ul><li>自适应三端，完美适配Typecho1.2.0版本</li></ul>
 *
 * @package Scarfskin Theme
 * @author 岳泽以
@@ -22,7 +22,6 @@ $this->need( 'header.php' );
     </div>
 <?php endif;
 ?>
-<!--文章-->
 <article style="padding:10px">
 <?php while( $this->next() ): ?>
 <div class = 'containers'>
@@ -49,6 +48,5 @@ $this->need( 'header.php' );
 ?>
 <div class = 'clear'>
 </section>
-<!--底部-->
 
 <?php $this->need( 'footer.php' );?>

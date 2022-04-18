@@ -14,7 +14,6 @@
             <h2 class="blog-description" style=""><?php echo $this->getDescription(); ?></h2>
         </div>
 </div>
-<!--文章循环-->
 <article style="padding:10px">
 <?php if ($this->have()): ?>
 <?php while( $this->next() ): ?>
@@ -53,10 +52,6 @@
 </div>
 <?php endif; ?>
 </article>
-<!--文章循环结束-->
-
-
-
 
 <section class = 'btn-xy list-pager'>
 <?php $this->pageLink( '上一页' );

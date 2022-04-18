@@ -7,7 +7,6 @@
             <p class="post_p"><?php $this->date();?> · <?php $this->category( ',', false );?> · <?php Postviews( $this);?> · <?php $this->commentsNum('暂无评论', '%d 评论'); ?></p>
         </div>
 </div>
-<!--内容-->
 <article class="container">
 <div class="postcc">
 <?php
@@ -30,10 +29,8 @@
                 <li class="post-copyright-link"><strong>本文链接：</strong><a href="<?php $this->permalink() ?>" title="<?php $this->title() ?>"><?php $this->permalink() ?></a></li>
                 <li class="post-copyright-license"><strong>版权声明：</strong><?php echo $this->options->LicenseInfo ? $this->options->LicenseInfo : '本作品采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="license nofollow">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可。' ?></li>
             </ul>
-
 <?php endif; ?>
-</div></div></div>
-<!--文章结束-->
+</div>
 <div class="fix">
 <ul class="m-news-opt">
     <li class="opt-item">
@@ -47,6 +44,6 @@
 </ul>
 </div>
 <div class="container commentsdd">
-<?php $this->need('comments.php'); ?>
+<?php $this->need('comment.php'); ?>
 </div>
 <?php $this->need('footer.php'); ?>

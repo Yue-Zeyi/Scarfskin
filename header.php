@@ -18,13 +18,11 @@
 	'date' => _t('在 %s 发布的文章'),
 	'author' => _t('作者 %s 发布的文章'),), '', ' - ');?><?php $this->options->title();if ($this->is('index') && $this->options->subTitle): ?> - <?php $this->options->subTitle();endif;?></title>
 
-    <!-- 使用url函数转换相关路径 -->
     <link rel="stylesheet" href="<?php $this->options->themeUrl('style.css');?>">
     <?php $this->header('generator=&template=&pingback=&xmlrpc=&wlw=&commentReply=&rss1=&rss2=&antiSpam=&atom=');?>
     <?php if ($this->options->CustomCSS): ?>
     <style type="text/css"><?php $this->options->CustomCSS();?></style>
     <?php endif;?>
-    <!-- 通过自有函数输出HTML头部信息 -->
     <?php $this->header();?>
     </head>
     <header id="headerTop" style="position: sticky;">
@@ -53,4 +51,9 @@
                 </div>
             </nav>
         </header>
-            <body>    
+        <?php  if ($this->options->loading):?>
+        <div class="loading-div">
+      <span class="sr-only"><img src="<?php $this->options->themeUrl('loading.gif');?>"/></span>
+        </div>
+        <?php endif; ?>
+        <body>    

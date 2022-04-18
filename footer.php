@@ -30,19 +30,15 @@ window.addEventListener('scroll', function() {
     <script src="<?php $this->options->themeUrl('js/jquery.min.js'); ?>"></script>
 <?php  if ($this->options->node):?>    
 <script language="JavaScript">
-//禁止页面选择以及鼠标右键
 document.οncοntextmenu=function(){return false;};
 document.onselectstart=function(){return false;};
 let h = window.innerHeight;
 let w = window.innerWidth;
-//禁用右键
 document.oncontextmenu = function () { return false; };
-//在本网页的任何键盘敲击事件都是无效操作 （防止F12和shift+ctrl+i调起开发者工具）
 window.onkeydown = window.onkeyup = window.onkeypress = function () {
 window.event.returnValue = false;
 return false;
 }
-//禁用开发者工具F12
 document.onkeydown = function () {
 if (window.event && window.event.keyCode == 123) {
 event.keyCode = 0;
@@ -60,17 +56,36 @@ window.location = "about:blank";
 </script>
 <?php endif; ?>
 <?php  if ($this->options->Totop):?>
-<script src="<?php $this->options->themeUrl('js/jquery.toTop.min.js'); ?>"></script>
-<a class="to-top">▲</a>
+<script>
+!function(o){"use strict";o.fn.toTop=function(t){var i=this,e=o(window),s=o("html, body"),n=o.extend({autohide:!0,offset:420,speed:500,position:!0,right:15,bottom:30},t);i.css({cursor:"pointer"}),n.autohide&&i.css("display","none"),n.position&&i.css({position:"fixed",right:n.right,bottom:n.bottom}),i.click(function(){s.animate({scrollTop:0},n.speed)}),e.scroll(function(){var o=e.scrollTop();n.autohide&&(o>n.offset?i.fadeIn(n.speed):i.fadeOut(n.speed))})}}(jQuery);    
+</script>
+<a class="to-top">
+<svg t="1650279219748" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="13820" width="20" height="20"><path d="M39.3846 0h945.2307692307693v157.53846153846155h-945.2307692307693V0zM984.6154 708.9231h-236.30769230769232v315.0769230769231h-472.61538461538464V708.9230769230769h-236.30769230769232l472.6154-472.6154L984.6154 708.9231z" p-id="13821" fill="#2c2c2c"></path></svg></a>
 <script>
 $(function() {
 	$('.to-top').toTop();
 });
 </script>
 <?php endif; ?>
-<?php  if ($this->options->Highlight):?>
+<?php  if ($this->options->loading):?>
 <script src="<?php $this->options->themeUrl('js/highlight.min.js'); ?>"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 <?php endif; ?>
 </body>
+<?php  if ($this->options->Highlight):?>
+<script>
+    //注释部分是设置2秒的定时延迟，timeout结束后加载网页
+      setTimeout(() => {
+        $(".loading-div").hide();
+        $('body').css('overflow-y','scroll');
+      }, 2000);
+    //这是根据js判断，页面加载完毕就显示
+document.onreadystatechange = function () {
+    if (document.readyState == "complete") {    
+        $(".loading-div").hide();
+        $('body').css('overflow','scroll');
+    }
+  }
+</script>
+<?php endif; ?>
 </html>
