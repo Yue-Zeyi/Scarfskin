@@ -65,19 +65,19 @@ function themeConfig($form) {
 	$loading = new Typecho_Widget_Helper_Form_Element_Radio('loading', 
 	array(1 => _t('启用'),
 	0 => _t('关闭')),
-	0, _t('延时加载功能'), _t('默认关闭，启用则会禁用F12和右键'));
+	0, _t('延时加载功能'), _t('默认关闭，启用则会延时加载loading...'));
 	$form->addInput($loading);
 	
 	$node = new Typecho_Widget_Helper_Form_Element_Radio('node', 
 	array(1 => _t('启用'),
 	0 => _t('关闭')),
-	0, _t('防扒站功能'), _t('默认关闭，启用则会延时加载loading...'));
+	0, _t('强防扒站功能'), _t('默认关闭，启用则会禁用F12和右键'));
 	$form->addInput($node);
 
 	$InsideLinksIcon = new Typecho_Widget_Helper_Form_Element_Radio('InsideLinksIcon', 
 	array(1 => _t('启用'),
 	0 => _t('关闭')),
-	0, _t('显示友链图标（内页）'), _t('默认关闭，启用后友链页面链接将显示链接图标'));
+	0, _t('显示内页友链图标'), _t('默认关闭，启用后友链页面链接将显示链接图标'));
 	$form->addInput($InsideLinksIcon);
 	
 	$Emoji = new Typecho_Widget_Helper_Form_Element_Radio('Emoji',
@@ -690,4 +690,3 @@ else{
     }
    return $os;
 }
-
