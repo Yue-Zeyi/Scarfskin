@@ -53,7 +53,7 @@
         </header>
         <?php  if ($this->options->loading):?>
         <div class="loading-div">
-      	<img src="<?php $this->options->themeUrl('loading.gif');?>"/>
+        <img src="<?php $this->options->themeUrl('loading.gif');?>"/>
         </div>
         <?php endif; ?>
         <body>    

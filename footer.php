@@ -3,6 +3,22 @@
     <p class="footerb">&copy; <?php echo date('Y'); ?>  <a href="<?php $this->options->siteUrl(); ?>"><?php $this->options->title() ?></a> Theme By <a href="https://www.yuezeyi.com/scarfskin.html" target="_blank">Scarfskin</a></p>
 	<p class="footerb"><a href="http://beian.miit.gov.cn" class="icp" target="_blank" rel="noreferrer"><?php $this->options->ICPbeian(); ?></a></p>
 </footer>
+<?php  if ($this->options->Pjax):?>    
+<script src="<?php $this->options->themeUrl('js/instantclick.min.js'); ?>" data-no-instant></script>
+<script data-no-instant>InstantClick.on('receive', function(url, body, title) {
+  var dont_display = body.querySelector('#dont_display_me_when_loaded_with_instantclick')
+  if (dont_display) {
+    dont_display.setAttribute('hidden', '');
+  }
+  title += ' (loaded with InstantClick)';
+  
+  return {
+    body: body,
+    title: title
+  };
+});
+</script>
+<?php endif; ?>
 <script>
 window.addEventListener('scroll', function() {
     var header = document.querySelector("header"); 
@@ -13,16 +29,13 @@ window.addEventListener('scroll', function() {
 
 <script src="<?php $this->options->themeUrl('js/fancybox.umd.js'); ?>"></script>    
 <script type="text/javascript">
-    Fancybox.bind("[data-fancybox]", {
-        Image: {
-            Panzoom: {
-                zoomFriction: 0.7,
-                maxScale: function() {
-                    return 5;
-                },
-            },
-        },
-    });
+    Fancybox.bind('[data-fancybox="gallery"]', {
+  caption: function (fancybox, carousel, slide) {
+    return (
+      `${slide.index + 1} / ${carousel.slides.length} <br />` + slide.caption
+    );
+  },
+});
 </script>
 <?php $this->footer(); ?>
 <?php if ($this->options->CustomContent): $this->options->CustomContent(); ?>
@@ -67,19 +80,45 @@ $(function() {
 });
 </script>
 <?php endif; ?>
-<?php  if ($this->options->loading):?>
+<?php  if ($this->options->Highlight):?>
 <script src="<?php $this->options->themeUrl('js/highlight.min.js'); ?>"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 <?php endif; ?>
 </body>
-<?php  if ($this->options->Highlight):?>
+<?php  if ($this->options->dianzan):?>
 <script>
-    //注释部分是设置2秒的定时延迟，timeout结束后加载网页
-      setTimeout(() => {
-        $(".loading-div").hide();
-        $('body').css('overflow-y','scroll');
-      }, 2000);
-    //这是根据js判断，页面加载完毕就显示
+ //  点赞按钮点击
+$('#agree-btn').on('click', function () {
+  $('#agree-btn').get(0).disabled = true;  //  禁用点赞按钮
+  //  发送 AJAX 请求
+  $.ajax({
+    //  请求方式 post
+    type: 'post',
+    //  url 获取点赞按钮的自定义 url 属性
+    url: $('#agree-btn').attr('data-url'),
+    //  发送的数据 cid，直接获取点赞按钮的 cid 属性
+    data: 'agree=' + $('#agree-btn').attr('data-cid'),
+    async: true,
+    timeout: 30000,
+    cache: false,
+    //  请求成功的函数
+    success: function (data) {
+      var re = /\d/;  //  匹配数字的正则表达式
+      //  匹配数字
+      if (re.test(data)) {
+        //  把点赞按钮中的点赞数量设置为传回的点赞数量
+        $('#agree-btn .agree-num').html(data);
+      }
+    },
+    error: function () {
+      //  如果请求出错就恢复点赞按钮
+      $('#agree-btn').get(0).disabled = false;
+    },
+  });
+});
+</script>
+<?php endif; ?>
+<script>
 document.onreadystatechange = function () {
     if (document.readyState == "complete") {    
         $(".loading-div").hide();
@@ -87,5 +126,4 @@ document.onreadystatechange = function () {
     }
   }
 </script>
-<?php endif; ?>
 </html>

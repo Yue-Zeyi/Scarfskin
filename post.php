@@ -1,4 +1,14 @@
 <?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
+<?php if ($this->options->dianzan !== '0'): ?>  
+<?php
+if (isset($_POST['agree'])) {
+    if ($_POST['agree'] == $this->cid) {
+        exit(agree($this->cid));
+    }
+    exit('error');
+}
+?>
+<?php endif; ?>
 <?php $this->need('header.php'); ?>
 <div class="father" style="background-image: url('<?php postThumb($this); ?>');">
         <div class="lvjing"></div>
@@ -7,21 +17,64 @@
             <p class="post_p"><?php $this->date();?> · <?php $this->category( ',', false );?> · <?php Postviews( $this);?> · <?php $this->commentsNum('暂无评论', '%d 评论'); ?></p>
         </div>
 </div>
+
+<?php if($this->hidden): ?>
+
+        <article class="container">
+        <div class="postcc">
+        <?php
+        $pattern = '/<\s*img[\s\S]+?(?:src=[\'"]([\S\s]*?)[\'"]\s*|alt=[\'"]([\S\s]*?)[\'"]\s*|[a-z]+=[\'"][\S\s]*?[\'"]\s*)+[\s\S]*?>/i';
+        $replacement = '<a href="$1" data-fancybox="gallery" data-caption="$2"/><img src="$1" alt="$2" title="点击放大图片"></a>';
+        $content = preg_replace($pattern, $replacement, $this->content);
+        echo $content;
+?>
+</div>
+<?php if ($this->options->dianzan !== '0'): ?>    
+<?php $agree = $this->hidden?array('agree' => 0, 'recording' => true):agreeNum($this->cid); ?>
+<div class="post_praise"> 
+<button class="post_praise_btn zan_btn" <?php echo $agree['recording']?'disabled':''; ?> type="button" id="agree-btn" data-cid="<?php echo $this->cid; ?>" data-url="<?php $this->permalink(); ?>">赞
+<small class="smanll">(<span class="agree-num"><?php echo $agree['agree']; ?></span>)</small>
+</button> 
+</div>    
+<?php endif; ?>
+    
+<div class="father_tags">
+      <div class="keywords"><?php $this->tags(' ', true, ''); ?></div>
+      <div class="right_tags">
+         <details><summary>最后更新</summary>  <p><?php echo date('Y/m/d' , $this->modified); ?></p></details>
+      
+      </div>
+</div>
+</article>
+		</div>
+<?php else: ?>    
 <article class="container">
 <div class="postcc">
 <?php
-    $pattern = '/\<img.*?src\=\"(.*?)\"[^>]*>/i';
-    $replacement = '<a href="$1" data-fancybox="gallery" /><img src="$1" alt="'.$this->title.'" title="点击放大图片"></a>';
+    $pattern = '/<\s*img[\s\S]+?(?:src=[\'"]([\S\s]*?)[\'"]\s*|alt=[\'"]([\S\s]*?)[\'"]\s*|[a-z]+=[\'"][\S\s]*?[\'"]\s*)+[\s\S]*?>/i';
+    $replacement = '<a href="$1" data-fancybox="gallery" data-caption="$2"/><img src="$1" alt="$2" title="点击放大图片"></a>';
     $content = preg_replace($pattern, $replacement, $this->content);
     echo $content;
 ?>
-    </div>
+</div>
+<?php if ($this->options->dianzan !== '0'): ?>    
+<?php $agree = $this->hidden?array('agree' => 0, 'recording' => true):agreeNum($this->cid); ?>
+<div class="post_praise"> 
+<button class="post_praise_btn zan_btn" <?php echo $agree['recording']?'disabled':''; ?> type="button" id="agree-btn" data-cid="<?php echo $this->cid; ?>" data-url="<?php $this->permalink(); ?>">赞
+<small class="smanll">(<span class="agree-num"><?php echo $agree['agree']; ?></span>)</small>
+</button> 
+</div>    
+<?php endif; ?>
+    
 <div class="father_tags">
       <div class="keywords"><?php $this->tags(' ', true, ''); ?></div>
-      <div class="right_tags">最后更新：<?php echo date('Y/m/d H:i:s' , $this->modified); ?></div>
-    </div>
+      <div class="right_tags">
+         <details><summary>最后更新</summary>  <p><?php echo date('Y/m/d' , $this->modified); ?></p></details>
+      
+      </div>
+</div>
 </article>
-
+<?php endif; ?>
 <div class="license">
 <?php if ($this->options->LicenseInfo !== '0'): ?>
              <ul class="post-copyright">

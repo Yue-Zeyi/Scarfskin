@@ -14,9 +14,18 @@
         </div>
 </div>
 <?php Breadcrumbs($this); ?>
-<article id="page_achives" class="container postcc">
+<article id="page_achives" class="container">
+    <div class="postcc">
 <div class="tags_culd">
-    <h2>标签云</h2>
+        <h3>统计</h3>
+    <?php Typecho_Widget::widget('Widget_Stat')->to($stat); ?>
+    <div class="tags_culd_list">
+<li>文章总数：<?php $stat->publishedPostsNum() ?>篇</li>
+<li>分类总数：<?php $stat->categoriesNum() ?>个</li>
+<li>评论总数：<?php $stat->publishedCommentsNum() ?>条</li>
+<li>页面总数：<?php $stat->publishedPagesNum() ?>个</li>
+    </div>
+    <h3>标签云</h3>
     <?php $this->widget('Widget_Metas_Tag_Cloud', 'sort=mid&ignoreZeroCount=1&desc=0&limit=30')->to($tags); ?>
     <div class="tags_culd_list">
         <?php if($tags->have()): ?>
@@ -26,29 +35,52 @@
         <?php endif; ?>
     </div>
 </div>
-<div class="page-ach">
-<?php
-$this->widget('Widget_Contents_Post_Recent', 'pageSize='.Typecho_Widget::widget('Widget_Stat')->publishedPostsNum)->to($archives);
-$year=0;
-$output = '<div id="archives">';
-while($archives->next()){
-    $year_tmp = date('Y',$archives->created);
-	if ($year > $year_tmp) {
-		$output .= '</ul>';
-	}
-	if ($year != $year_tmp) {
-		$year = $year_tmp;
-		$output .= '<h3>'.date('Y 年 m 月',$archives->created).'</h3><ul>';
-	}
-	else {
-		$output .= '<li>'.date('m-d：',$archives->created).'<a href="'.$archives->permalink .'">'. $archives->title .'</a></li>';
-	}
-}
-$output .= '</ul></div>';
-echo $output;
-?>
+    <h3 style="margin-bottom:.5em;">文章归档</h3>
+    <div class="page-ach">
+<?php  if ($this->options->zhaikai):?>
+	<?php $this->widget('Widget_Contents_Post_Recent', 'pageSize=10000')->to($archives);
+				$year=0; $mon=0; $i=0; $j=0;
+				$output = '<details  open>';
+				while($archives->next()):
+					$year_tmp = date('Y',$archives->created);
+					$mon_tmp = date('m',$archives->created);
+					$y=$year; $m=$mon;
+					if ($mon != $mon_tmp && $mon > 0) $output .= '</div>';
+					if ($year != $year_tmp && $year > 0) $output .= '</div>';
+					if ($year != $year_tmp) {
+						$year = $year_tmp;
+					}
+					if ($mon != $mon_tmp) {
+						$mon = $mon_tmp;
+						$output .= '<summary style="font-size:1.8em;font-weight: 700;">'.date('Y 年 m 月',$archives->created).'</summary><ul>';
+					}
+				$output .= '<li>'.date('m-d：',$archives->created).'<a href="'.$archives->permalink .'">'. $archives->title .'</a></li>';
+				endwhile;
+			echo $output .= '</ul></details>';
+	?>
+<?php else: ?>  			
+    <?php $this->widget('Widget_Contents_Post_Recent', 'pageSize=10000')->to($archives);
+				$year=0; $mon=0; $i=0; $j=0;
+				$output = '<details>';
+				while($archives->next()):
+					$year_tmp = date('Y',$archives->created);
+					$mon_tmp = date('m',$archives->created);
+					$y=$year; $m=$mon;
+					if ($mon != $mon_tmp && $mon > 0) $output .= '</div>';
+					if ($year != $year_tmp && $year > 0) $output .= '</div>';
+					if ($year != $year_tmp) {
+						$year = $year_tmp;
+					}
+					if ($mon != $mon_tmp) {
+						$mon = $mon_tmp;
+						$output .= '<summary style="font-size:1.8em;font-weight: 700;">'.date('Y 年 m 月',$archives->created).'</summary><ul>';
+					}
+				$output .= '<li>'.date('m-d：',$archives->created).'<a href="'.$archives->permalink .'">'. $archives->title .'</a></li>';
+				endwhile;
+			echo $output .= '</ul></details>';
+	?>
+	<?php endif; ?>    
 </div>
-
+</div>
 </article>
-</div>
 <?php $this->need('footer.php'); ?>
