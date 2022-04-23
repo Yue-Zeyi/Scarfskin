@@ -1,5 +1,4 @@
 <?php
-if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 error_reporting(0);
 define('INITIAL_VERSION_NUMBER', '2.5.3');
 if (Helper::options()->GravatarUrl) define('__TYPECHO_GRAVATAR_PREFIX__', Helper::options()->GravatarUrl);
@@ -95,6 +94,24 @@ function themeConfig($form) {
 	$form->addInput($subTitle);
 	$favicon = new Typecho_Widget_Helper_Form_Element_Text('favicon', NULL, NULL, _t('Favicon 地址'), _t('在这里填入一个图片 URL 地址, 以添加一个Favicon，留空则不单独设置Favicon'));
 	$form->addInput($favicon);
+	$Searchd = new Typecho_Widget_Helper_Form_Element_Radio('Searchd', 
+		array(1 => _t('启用'),
+		0 => _t('关闭')),
+		0, _t('顶部搜索框显示'), _t('默认不显示，启用则会在导航栏显示搜索框(如分类较多且未合并显示开启后会错乱不建议开启)'));
+	$form->addInput($Searchd);	
+	$Navset = new Typecho_Widget_Helper_Form_Element_Checkbox('Navset', 
+	array('ShowCategory' => _t('是否显示分类（关闭则导航栏不显示所有分类）'),
+	'AggCategory' => _t('▶ 分类是否合并显示'),
+	'ShowPage' => _t('是否显示页面（关闭则导航栏不显示所有页面）'),
+	'AggPage' => _t('▶ 页面是否合并显示')),
+	array('ShowCategory', 'AggCategory', 'ShowPage'), _t('导航栏显示'), _t('注：默认会显示合并的分类，且显示未合并页面'));
+	$form->addInput($Navset->multiMode());
+
+	$CategoryText = new Typecho_Widget_Helper_Form_Element_Text('CategoryText', NULL, NULL, _t('分类合并后显示的唯一名称'), _t('在这里输入导航栏<b>分类</b>下拉菜单的显示名称,留空则默认显示为“分类”'));
+	$form->addInput($CategoryText);
+
+	$PageText = new Typecho_Widget_Helper_Form_Element_Text('PageText', NULL, NULL, _t('页面合并后显示的唯一名称'), _t('在这里输入导航栏<b>页面</b>下拉菜单的显示名称,留空则默认显示为“其他”'));
+	$form->addInput($PageText);
 	$CustomCSS = new Typecho_Widget_Helper_Form_Element_Textarea('CustomCSS', NULL, NULL, _t('自定义CSS样式'), _t('在这里填入你的自定义样式（直接填入css，无需&lt;style&gt;标签）'));
 	$form->addInput($CustomCSS);
 	$LicenseInfo = new Typecho_Widget_Helper_Form_Element_Text('LicenseInfo', NULL, NULL, _t('文章版权信息'), _t('填入后将在文章底部显示你填入的版权信息（支持HTML标签，输入数字“0”可关闭显示），留空则默认使用 (CC BY-SA 4.0)国际许可协议。'));
@@ -103,9 +120,12 @@ function themeConfig($form) {
 	$dianzan = new Typecho_Widget_Helper_Form_Element_Radio('dianzan', 
 		array(1 => _t('启用'),
 		0 => _t('关闭')),
-		0, _t('文章点赞功能'), _t('默认关闭，启用则会添加点赞按钮'));
+		0, _t('赞赏功能'), _t('默认关闭，启用则会添加点赞和打赏按钮'));
 	$form->addInput($dianzan);	
-	
+	$WxUrl = new Typecho_Widget_Helper_Form_Element_Text('WxUrl', NULL, NULL, _t('微信打赏二维码'), _t('打赏中使用的微信二维码图片URL,建议尺寸小于250×250,且为正方形,开启赞赏功能后生效。'));
+	$form->addInput($WxUrl);
+	$ZfbUrl = new Typecho_Widget_Helper_Form_Element_Text('ZfbUrl', NULL, NULL, _t('支付宝打赏二维码'), _t('打赏中使用的支付宝二维码图片URL,建议尺寸小于250×250,且为正方形,开启赞赏功能后生效。'));
+	$form->addInput($ZfbUrl);		
 	$Highlight = new Typecho_Widget_Helper_Form_Element_Radio('Highlight', 
 		array(1 => _t('启用'),
 		0 => _t('关闭')),
@@ -131,6 +151,8 @@ function themeConfig($form) {
 		0 => _t('关闭')),
 		0, _t('延时加载功能'), _t('默认关闭，启用则会显示页面加载动态图'));
 	$form->addInput($loading);
+	$loadingUrl = new Typecho_Widget_Helper_Form_Element_Text('loadingUrl', NULL, NULL, _t('自定义loading图'), _t('开启延时加载功能生效，在这里填入一个图片 URL 地址（gif格式）, 即可自定义加载loading动画,留空默认使用主题内置。'));
+	$form->addInput($loadingUrl);	
 	$node = new Typecho_Widget_Helper_Form_Element_Radio('node', 
 		array(1 => _t('启用'),
 		0 => _t('关闭')),
@@ -152,6 +174,7 @@ function themeConfig($form) {
 	$CustomContent = new Typecho_Widget_Helper_Form_Element_Textarea('CustomContent', NULL, NULL, _t('底部自定义内容'), _t('位于底部，footer之后body之前，适合放置一些JS内容，如网站统计代码等（若开启全站Pjax，目前支持Google和百度统计的回调，其余统计代码可能会不准确）'));
 	$form->addInput($CustomContent);
 }
+
 function themeInit($archive) {
 	$options = Helper::options();
 	$options->commentsAntiSpam = false;
@@ -169,6 +192,7 @@ function themeInit($archive) {
 		}
 	}
 }
+
 function cjUrl($path) {
 	$options = Helper::options();
 	$ver = '?ver='.constant("INITIAL_VERSION_NUMBER");
@@ -178,9 +202,11 @@ function cjUrl($path) {
 		$options->themeUrl($path.$ver);
 	}
 }
+
 function hrefOpen($obj) {
 	return preg_replace('/<a\b([^>]+?)\bhref="((?!'.addcslashes(Helper::options()->index, '/._-+=#?&').'|\#).*?)"([^>]*?)>/i', '<a\1href="\2"\3 target="_blank">', $obj);
 }
+
 function UrlReplace($obj) {
 	$list = explode(PHP_EOL, Helper::options()->AttUrlReplace);
 	foreach ($list as $tmp) {
@@ -189,6 +215,7 @@ function UrlReplace($obj) {
 	}
 	return $obj;
 }
+
 function Postviews($archive) {
 	$db = Typecho_Db::get();
 	$cid = $archive->cid;
@@ -217,57 +244,7 @@ function Breadcrumbs($archive) {
 		echo '<div class="breadcrumbs">'.PHP_EOL .'<a href="'.$options->siteUrl.'">首页</a> &raquo; '.$archive->title.PHP_EOL .'</div>'.PHP_EOL;
 	}
 }
-function createCatalog($obj) {
-	global $catalog;
-	global $catalog_count;
-	$catalog = array();
-	$catalog_count = 0;
-	$obj = preg_replace_callback('/<h([1-6])(.*?)>(.*?)<\/h\1>/i', function($obj) {
-		global $catalog;
-		global $catalog_count;
-		$catalog_count ++;
-		$catalog[] = array('text' => trim(strip_tags($obj[3])), 'depth' => $obj[1], 'count' => $catalog_count);
-		return '<h'.$obj[1].$obj[2].'><a class="cl-offset" name="cl-'.$catalog_count.'"></a>'.$obj[3].'</h'.$obj[1].'>';
-	}
-	, $obj);
-	return $obj.PHP_EOL .getCatalog();
-}
-function getCatalog() {
-	global $catalog;
-	$index = '';
-	if ($catalog) {
-		$index = '<ul>'.PHP_EOL;
-		$prev_depth = '';
-		$to_depth = 0;
-		foreach($catalog as $catalog_item) {
-			$catalog_depth = $catalog_item['depth'];
-			if ($prev_depth) {
-				if ($catalog_depth == $prev_depth) {
-					$index .= '</li>'.PHP_EOL;
-				} elseif ($catalog_depth > $prev_depth) {
-					$to_depth++;
-					$index .= PHP_EOL .'<ul>'.PHP_EOL;
-				} else {
-					$to_depth2 = ($to_depth > ($prev_depth - $catalog_depth)) ? ($prev_depth - $catalog_depth) : $to_depth;
-					if ($to_depth2) {
-						for ($i=0; $i<$to_depth2; $i++) {
-							$index .= '</li>'.PHP_EOL .'</ul>'.PHP_EOL;
-							$to_depth--;
-						}
-					}
-					$index .= '</li>'.PHP_EOL;
-				}
-			}
-			$index .= '<li><a href="#cl-'.$catalog_item['count'].'" onclick="Catalogswith()">'.$catalog_item['text'].'</a>';
-			$prev_depth = $catalog_item['depth'];
-		}
-		for ($i=0; $i<=$to_depth; $i++) {
-			$index .= '</li>'.PHP_EOL .'</ul>'.PHP_EOL;
-		}
-		$index = '<div id="catalog-col">'.PHP_EOL .'<b>文章目录</b>'.PHP_EOL .$index.'<script>function Catalogswith(){document.getElementById("catalog-col").classList.toggle("catalog");document.getElementById("catalog").classList.toggle("catalog")}</script>'.PHP_EOL .'</div>'.PHP_EOL;
-	}
-	return $index;
-}
+
 function CommentAuthor($obj, $autoLink = NULL, $noFollow = NULL) {
 	$options = Helper::options();
 	$autoLink = $autoLink ? $autoLink : $options->commentsShowUrl;
@@ -724,4 +701,98 @@ function agree($cid) {
 	$db->query($db->update('table.contents')->rows(array('agree' => (int)$agree['agree'] + 1))->where('cid = ?', $cid));
 	$agree = $db->fetchRow($db->select('table.contents.agree')->from('table.contents')->where('cid = ?', $cid));
 	return $agree['agree'];
+}
+/*短代码*/
+Typecho_Plugin::factory('admin/write-post.php')->bottom = array('myyodu', 'one');
+Typecho_Plugin::factory('admin/write-page.php')->bottom = array('myyodu', 'one');
+class myyodu {
+    public static function one()
+    {
+    ?>
+<style>
+.field.is-grouped{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;  -ms-flex-wrap: wrap;flex-wrap: wrap;}.field.is-grouped>.control{-ms-flex-negative:0;flex-shrink:0}.field.is-grouped>.control:not(:last-child){margin-bottom:.5rem;margin-right:.75rem}.field.is-grouped>.control.is-expanded{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-negative:1;flex-shrink:1}.field.is-grouped.is-grouped-centered{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}.field.is-grouped.is-grouped-right{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end}.field.is-grouped.is-grouped-multiline{-ms-flex-wrap:wrap;flex-wrap:wrap}.field.is-grouped.is-grouped-multiline>.control:last-child,.field.is-grouped.is-grouped-multiline>.control:not(:last-child){margin-bottom:.75rem}.field.is-grouped.is-grouped-multiline:last-child{margin-bottom:-.75rem}.field.is-grouped.is-grouped-multiline:not(:last-child){margin-bottom:0}.tags{-webkit-box-align:center;-ms-flex-align:center;align-items:center;display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start}.tags .tag{margin-bottom:.5rem}.tags .tag:not(:last-child){margin-right:.5rem}.tags:last-child{margin-bottom:-.5rem}.tags:not(:last-child){margin-bottom:1rem}.tags.has-addons .tag{margin-right:0}.tags.has-addons .tag:not(:first-child){border-bottom-left-radius:0;border-top-left-radius:0}.tags.has-addons .tag:not(:last-child){border-bottom-right-radius:0;border-top-right-radius:0}.tag{-webkit-box-align:center;-ms-flex-align:center;align-items:center;background-color:#f5f5f5;border-radius:3px;color:#4a4a4a;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;font-size:.75rem;height:2em;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;line-height:1.5;padding-left:.75em;padding-right:.75em;white-space:nowrap}.tag .delete{margin-left:.25em;margin-right:-.375em}.tag.is-white{background-color:#fff;color:#0a0a0a}.tag.is-black{background-color:#0a0a0a;color:#fff}.tag.is-light{background-color:#fff;color:#363636}.tag.is-dark{background-color:#363636;color:#f5f5f5}.tag.is-primary{background-color:#00d1b2;color:#fff}.tag.is-info{background-color:#3273dc;color:#fff}.tag.is-success{background-color:#23d160;color:#fff}.tag.is-warning{background-color:#ffdd57;color:rgba(0,0,0,.7)}.tag.is-danger{background-color:#ff3860;color:#fff}.tag.is-large{font-size:1.25rem}.tag.is-delete{margin-left:1px;padding:0;position:relative;width:2em}.tag.is-delete:after,.tag.is-delete:before{background-color:currentColor;content:"";display:block;left:50%;position:absolute;top:50%;-webkit-transform:translateX(-50%) translateY(-50%) rotate(45deg);transform:translateX(-50%) translateY(-50%) rotate(45deg);-webkit-transform-origin:center center;transform-origin:center center}.tag.is-delete:before{height:1px;width:50%}.tag.is-delete:after{height:50%;width:1px}.tag.is-delete:focus,.tag.is-delete:hover{background-color:#e8e8e8}.tag.is-delete:active{background-color:#dbdbdb}.tag.is-rounded{border-radius:290486px}
+</style>
+<script language="javascript">
+    var EventUtil = function() {};
+    EventUtil.addEventHandler = function(obj, EventType, Handler) {
+        if (obj.addEventListener) {
+            obj.addEventListener(EventType, Handler, false);
+        }
+        else if (obj.attachEvent) {
+            obj.attachEvent('on' + EventType, Handler);
+        } else {
+            obj['on' + EventType] = Handler;
+        }
+    }
+    if (document.getElementById("text")) {
+        EventUtil.addEventHandler(document.getElementById('text'), 'propertychange', CountChineseCharacters);
+        EventUtil.addEventHandler(document.getElementById('text'), 'input', CountChineseCharacters);
+    }
+    function showit(Word) {
+        alert(Word);
+    }
+    function CountChineseCharacters() {
+        Words = document.getElementById('text').value;
+        var W = new Object();
+        var Result = new Array();
+        var iNumwords = 0;
+        var sNumwords = 0;
+        var sTotal = 0;
+        var iTotal = 0;
+        var eTotal = 0;
+        var otherTotal = 0;
+        var bTotal = 0;
+        var inum = 0;
+      var znum = 0;
+      var gl = 0;
+      var paichu = 0;
+        for (i = 0; i < Words.length; i++) {
+            var c = Words.charAt(i);
+            if (c.match(/[\u4e00-\u9fa5]/) || c.match(/[\u0800-\u4e00]/) || c.match(/[\uac00-\ud7ff]/)) {
+                if (isNaN(W[c])) {
+                    iNumwords++;
+                    W[c] = 1;
+                }
+                iTotal++;
+            }
+        }
+        for (i = 0; i < Words.length; i++) {
+            var c = Words.charAt(i);
+            if (c.match(/[^\x00-\xff]/)) {
+                if (isNaN(W[c])) {
+                    sNumwords++;
+                }
+                sTotal++;
+            } else {
+                eTotal++;
+            }
+            if (c.match(/[0-9]/)) {
+                inum++;
+            }
+           if (c.match(/[a-zA-Z]/)) {
+                znum++;
+            }
+          if (c.match(/[\s]/)) {
+               gl++;
+            }
+           if (c.match(/[　◕‿↑↓←→↖↗↘↙↔↕。《》、【】“”•‘’❝❞′……—―‐〈〉„╗╚┐└‖〃「」‹›『』〖〗〔〕∶〝〞″≌∽≦≧≒≠≤≥㏒≡≈✓✔◐◑◐◑✕✖★☆₸₹€₴₰₤₳र₨₲₪₵₣₱฿₡₮₭₩₢₧₥₫₦₠₯○㏄㎏㎎㏎㎞㎜㎝㏕㎡‰〒々℃℉ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦㄧㄨㄩ]/)) {
+               paichu++;
+            }
+        }
+        document.getElementById('hanzi').innerText = iTotal - paichu;
+        document.getElementById('zishu').innerText = inum + iTotal - paichu;
+        document.getElementById('biaodian').innerText = sTotal - iTotal + eTotal - inum - znum - gl + paichu;
+        document.getElementById('zimu').innerText = znum;
+        document.getElementById('shuzi').innerText = inum;
+        document.getElementById("zifu").innerHTML = iTotal * 2 + (sTotal - iTotal) * 2 + eTotal;
+    }
+</script>
+<script> 
+$(document).ready(function(){
+$("#wmd-editarea").append('<div class="field is-grouped"><span class="tag">共计：</span><div class="control"><div class="tags has-addons"><span class="tag is-dark" id="zishu">0</span> <span class="tag is-primary">个字数</span></div></div><div class="control"><div class="tags has-addons"><span class="tag is-dark" id="zifu">0</span> <span class="tag is-primary">个字符</span></div></div><span class="tag">包含：</span><div class="control"><div class="tags has-addons"><span class="tag is-light" id="hanzi">0</span> <span class="tag is-danger">个文字</span></div></div><div class="control"><div class="tags has-addons"><span class="tag is-light" id="biaodian">0</span> <span class="tag is-info">个符号</span></div></div><div class="control"><div class="tags has-addons"><span class="tag is-light" id="zimu">0</span> <span class="tag is-success">个字母</span></div></div><div class="control"><div class="tags has-addons"><span class="tag is-light" id="shuzi">0</span> <span class="tag is-warning">个数字</span></div></div></div>');
+CountChineseCharacters();
+});
+</script>
+<?php
+    }
 }

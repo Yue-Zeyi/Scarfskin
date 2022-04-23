@@ -5,7 +5,7 @@
 *
 * @package Scarfskin Theme
 * @author 岳泽以
-* @version 1.0.1
+* @version 1.0.2
 * @link https://www.yuezeyi.com/
 */
 /*顶部*/

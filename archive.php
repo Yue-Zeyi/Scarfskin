@@ -6,10 +6,10 @@
         <div class="son">
             <h1 class="blog-title" style=""><?php $this->archiveTitle(array(
 'category'  =>  _t('%s'),
-'search'    =>  _t('【%s】'),
-'tag'       =>  _t('【%s】'),
-'date'      =>  _t('【%s】'),
-'author'    =>  _t('【%s】')
+'search'    =>  _t('%s'),
+'tag'       =>  _t('%s'),
+'date'      =>  _t('%s'),
+'author'    =>  _t('%s')
 ), '', ''); ?></h1>
             <h2 class="blog-description" style=""><?php echo $this->getDescription(); ?></h2>
         </div>
@@ -34,14 +34,10 @@
 </a>
 <?php endwhile;?>
 <?php else: ?>
-<div style="text-align:center;">
-<h3 style="font-size: 2.5em;
-    font-weight: 700;margin-top: 2em;margin-bottom:1em;
-    color: #030749;" class="error-message">没有找到内容</h3>
+<div  class="error-message" style="">
+<h3>没有找到内容</h3>
 <div class="search d3">
-    <p style="font-size: 1.5em;
-    font-weight: 700;margin: 1em;
-    color: #030749;" class="error-message">你可以在下方尝试搜索...</p>
+    <p style="" class="error-message">你可以在下方尝试搜索...</p>
     <form id="search" method="post" action="<?php $this->options->siteUrl(); ?>">
         <input type="text" id="s" name="s" placeholder="请输入内容..." required />
         <button type="submit"></button>

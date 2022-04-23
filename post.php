@@ -60,12 +60,28 @@ if (isset($_POST['agree'])) {
 <?php if ($this->options->dianzan !== '0'): ?>    
 <?php $agree = $this->hidden?array('agree' => 0, 'recording' => true):agreeNum($this->cid); ?>
 <div class="post_praise"> 
-<button class="post_praise_btn zan_btn" <?php echo $agree['recording']?'disabled':''; ?> type="button" id="agree-btn" data-cid="<?php echo $this->cid; ?>" data-url="<?php $this->permalink(); ?>">赞
-<small class="smanll">(<span class="agree-num"><?php echo $agree['agree']; ?></span>)</small>
+<button class="post_praise_btn zan_btn" style="display: inline-block;" <?php echo $agree['recording']?'disabled':''; ?> type="button" id="agree-btn" data-cid="<?php echo $this->cid; ?>" data-url="<?php $this->permalink(); ?>">赞
+<small class="smanll"><span class="agree-num"><?php echo $agree['agree']; ?></span></small>
 </button> 
+<button id="rewardButton" style="display: inline-block;" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+        <div id="wechat" style="display: inline-block">
+            <a class="fancybox" rel="group"><img id="wechat_qr" src="<?php $this->options->WxUrl() ?>" alt="WeChat Pay"></a>
+            <p>
+                微信打赏
+            </p>
+        </div>
+        <div id="alipay" style="display: inline-block">
+            <a class="fancybox" rel="group"><img id="alipay_qr" src="<?php $this->options->ZfbUrl() ?>" alt="Alipay"></a>
+            <p>
+                支付宝打赏
+            </p>
+        </div>
+    </div>
 </div>    
 <?php endif; ?>
-    
 <div class="father_tags">
       <div class="keywords"><?php $this->tags(' ', true, ''); ?></div>
       <div class="right_tags">
