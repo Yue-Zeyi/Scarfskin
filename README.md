@@ -40,7 +40,7 @@ scarfskin译为外皮，如你所见，这是一款拥有漂亮外表的主题�
 
 ## 下载
 
-**本地下载**：[点击直接下载](https://www.yuezeyi.com/file/Scarfskin1.0.zip)
+**最新版本下载**：[点击直接下载](https://github.com/Yue-Zeyi/Scarfskin/releases/tag/v1.0.2)
 
 **Github地址**：[https://github.com/Yue-Zeyi/Scarfskin](https://github.com/Yue-Zeyi/Scarfskin)
 
